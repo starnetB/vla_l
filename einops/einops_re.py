@@ -2,7 +2,7 @@
 Author: 小d 2102690391@qq.com
 Date: 2025-07-30 14:20:35
 LastEditors: 小d 2102690391@qq.com
-LastEditTime: 2025-07-30 17:49:57
+LastEditTime: 2025-07-30 17:54:49
 FilePath: /nlp-tutorial-master/VLA/einops/einops_re.py
 Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 '''
@@ -85,5 +85,20 @@ print(c.shape)
 
 # 5 pack 用法 
 
-x = torch.randn(1,6,1,2) #形状(1,6,1,2
+from einops import pack, unpack
+#pack 和 unpack实现了多个张量的组合和拆分，并且不需要预先调整张量到相同的尺寸。
+
+原文: https://0809zheng.github.io/2023/02/20/einops.html
+image_rgb = np.random.random([h, w, 3])
+image_depth = np.random.random([h, w])
+
+image_rgbd, ps = pack([image_rgb, image_depth], 'h w *')
+assert image_rgbd.shape == (h, w, 4)
+# ps: [(3,), ()]
+
+unpacked_rgb, unpacked_depth = unpack(image_rgbd, ps, 'h w *')
+# 也可指定每个拆分维度
+rgb, depth = unpack(image_rgbd, [[3], [1]], 'h w *')
+
+
 
